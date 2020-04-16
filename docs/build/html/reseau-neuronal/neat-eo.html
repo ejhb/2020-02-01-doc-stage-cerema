@@ -83,18 +83,24 @@
               <p class="caption"><span class="caption-text">Réseau neuronal</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Neat-EO</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#intro">Intro</a><ul class="simple">
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#preparation">Préparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilisation">Utilisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#les-outils">Les outils</a><ul class="simple">
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="yolo.html">Yolo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="yolt.html">Yolt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="senas.html">Senas</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Logiciel Géospatial</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../geospatial/postgis.html">PostGIS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../geospatial/qgis.html">QGIS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geospatial/overpass_turbo.html">Overpass Turbo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geospatial/postgresql.html">PostgreSQL</a></li>
 </ul>
 
             
@@ -161,8 +167,83 @@
             
   <div class="section" id="neat-eo">
 <h1>Neat-EO<a class="headerlink" href="#neat-eo" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="intro">
-<h2>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>L’installation de neat-eo est très simple et c’est passé sans acoup avec</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3 install https://neat-eo.pink/latest
+</pre></div>
+</div>
+<p>Il faut quand même faire attention que CUDA et le Driver Nvidia soi bien installé sinon une erreur vous disant que vous n’avez aucun GPU surviendrait durant l’entrainement.</p>
+</div>
+<div class="section" id="preparation">
+<h2>Préparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
+<p>IL y’a deux façon de preparer votre dataset :</p>
+<ol class="arabic simple">
+<li><p>Soit par téléchargement grâce “neo download” et un serveur Web en WMS ou XYZ, pour télécharger directement les tiles mais attention il vous faudra un fichier cover  .tiles ou un .csv.  (Cette façon est en progression…)</p></li>
+<li><p>Soit vous avez déjà une Ortophoto que vous avez déjà en votre possesion et que vous découperez en utilisant “neo tile”. Mais attention il vous faudra le geojson correspondant à l’image.</p></li>
+</ol>
+<p>Il vous faudra donc une Ortophoto (ou des tiles suivant la méthode que vous allez pouvoir découper en tiles grâce a NEAT, un geojson contenant les “Labels” qui vous intéressent (Building , Parking etc…)</p>
+<p>Ainsi qu’un .csv qui regroupera les infos permettant au tiles d’avoir un ordre et de pouvoir s’assembler correctement ,  mais ce dernier peut être générer avec NEAT.</p>
+<p><a class="reference external" href="https://github.com/hachem13/StageCerema/blob/master/docs/source/external-files/config_neat.toml">Ici le config.toml</a> qui est le file config de neat-eo pour votre entrainement d’entrainement, on peux y regler de nombreux paramètre comme la couleur , le nom des labels…</p>
+<p>N’oubliez pas d’utiliser :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">NEO_CONFIG</span><span class="o">=</span>config_neat.toml
+</pre></div>
+</div>
+<p>Pour utiliser votre fichier en Config.</p>
+<p>J’ai eu un problème lors de l’entrainement , je n’avais pas assez de mémoire GPU , car j’ai 6 GO et 8go sont recomandé , pour résoudre mon problème j’ai reglé le “bs” (batch size) du config file sur 3 au lieu de 4, et l’entraînement à pu être éffectuer.</p>
+</div>
+<div class="section" id="utilisation">
+<h2>Utilisation<a class="headerlink" href="#utilisation" title="Permalink to this headline">¶</a></h2>
+<p>Je précise bien que neo s’utilise avec le terminal</p>
+<p>La première methode avec neo download est encore en phase test je ne peux donc pas compléter cette partie.</p>
+<p>La deuxième méthode avec une ortophoto déjà présente commence par le neo tile</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo tile --zoom <span class="m">19</span> --bands <span class="m">1</span>,2,3 --nodata_threshold <span class="m">25</span> --rasters <span class="o">[</span>CHEMIN VERS VOTRE IMAGE<span class="o">]</span> --out <span class="o">[</span>CHEMIN DE SORTIE<span class="o">]</span>
+</pre></div>
+</div>
+<p>Après ça vous génererez le fichier cover :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo cover --dir <span class="o">[</span>CHEMIN DE VOS IMAGE<span class="o">]</span> --out <span class="o">[</span>CHEMIN DE SORTIE ET EXTENSIONS SOUHAITEZ<span class="o">]</span>
+</pre></div>
+</div>
+<p>Ensuite vous “pixeliserais” le geojson en utilisant votre fichier cover :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo rasterize --geojson <span class="o">[</span>CHEMIN VERS VOTRE GEOJSON<span class="o">]</span> --type <span class="o">[</span>FEATURES SOUHAITEZ <span class="o">(</span>ex. Parking, Building..<span class="o">)]</span> --cover <span class="o">[</span>CHEMIN VERS VOTRE COVER<span class="o">]</span> --out <span class="o">[</span>CHEMIN DE SORTIE<span class="o">]</span>
+</pre></div>
+</div>
+<p>Quand ces étapes sont faites on va pouvoir entrainer le model :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo train --dataset <span class="o">[</span>CHEMIN VERS VOTRE DATASET D<span class="s1">&#39;ENTRAINEMENT] --epochs [Nombre d&#39;</span>epoch à Entrainer<span class="o">]</span> --out <span class="o">[</span>CHEMIN DE SORTIE<span class="o">]</span>
+
+neo <span class="nb">eval</span> --checkpoint <span class="o">[</span>CHEMIN VERS VOTRE DERNIER CHECKPOINT<span class="o">]</span> --dataset train
+
+neo <span class="nb">eval</span> lance une evaluation à partir du checkpoint souhaitez
+</pre></div>
+</div>
+<p>Après avoir entrainer votre model on va découpez l’image de prédiction avec neo tiles et les même paramètre que utiliser au début.</p>
+<p>Après ça on lance la prédiction :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo predict --checkpoint model/checkpoint-00005.pth --dataset predict --metatiles --out predict/masks
+</pre></div>
+</div>
+<p>La prédiction terminé on réutilise neo cover et neo rasterize sur la prediction :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo cover --dir predict/masks --out predict/cover.csv
+neo rasterize --geojson predict/*/*-labels/*.geojson --type Building --cover predict/cover.csv --out predict/labels
+</pre></div>
+</div>
+<p>On fait les comparaisons</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo compare --mode stack --images predict/images predict/labels predict/masks --cover predict/cover.csv --out predict/compare
+
+neo compare --mode list --labels predict/labels --masks predict/masks --max Building QoD <span class="m">0</span>.80 --cover predict/cover.csv --geojson --out predict/compare/tiles.json
+
+neo compare --mode side --images predict/images predict/compare --cover predict/cover.csv --out predict/compare_side
+</pre></div>
+</div>
+<p>Et finalement on vectorize les résultats</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>neo vectorize --masks predict/masks --type Building --out predict/building.json
+</pre></div>
+</div>
+<p>Vous pourrez retrouver un entrainement très sympas sur le repo de NEAT-EO</p>
+</div>
+<div class="section" id="les-outils">
+<h2>Les outils<a class="headerlink" href="#les-outils" title="Permalink to this headline">¶</a></h2>
+<p>Pour plus de précisions sur les outils rendez vous sur la Doc <a class="reference external" href="https://datapink.io/datapink/neat-EO/src/branch/master/docs/tools.md">tools</a>  de NEAT-EO</p>
+<p><a class="reference external" href="https://datapink.io/datapink/neat-EO/src/branch/master/README.md">Source</a></p>
 <div class="toctree-wrapper compound">
 </div>
 </div>

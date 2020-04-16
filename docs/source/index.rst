@@ -5,7 +5,14 @@
 
 
 Bienvenue dans la documentation med-data
-****************************************
+========================================
+
+Dans ce repertoire vous pourrez retrouver une documentation détaillé de la stack med-data. Elle est réalisé par les stagières de **Simplon.co** l'ors de leurs formation en la qualité de deveuloppers.se Data dans le cadre de leurs stage en **deeplearning** à la **Cerema**.
+
+L'équipe est composé : Hachem Mosbah, Daniel Kaddous et Joshua Harris.
+
+`Readme <https://github.com/hachem13/StageCerema/blob/master/README.md>`_ | 
+`Trello <https://trello.com/b/oE3T8HdO/stage-cerema>`_
 
 Réseau Neuronal
 ---------------
@@ -21,20 +28,22 @@ En modélisation des circuits biologiques, ils permettent de tester quelques hyp
   :doc:`Neat-EO <reseau-neuronal/neat-eo>`
 
 * **Reconnaissance**:
-  :doc:`YOLO <reseau-neuronal/yolo>`
-
-* **Reconnaissance**:
+  :doc:`YOLO <reseau-neuronal/yolo>` |
   :doc:`YOLT <reseau-neuronal/yolt>`
+
+* **In progress**:
+  :doc:`Senas <reseau-neuronal/senas>`
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: Réseau neuronal
 
    reseau-neuronal/neat-eo
    reseau-neuronal/yolo
-   reseau-neuronal/yolt	  
+   reseau-neuronal/yolt	
+   reseau-neuronal/senas  
 
 Logiciel Géospatial
 -------------------
@@ -52,17 +61,23 @@ Cette caractéristique clé du SIG permet d’imaginer de nouvelles applications
 * **Sampling**:
   :doc:`PostGIS <geospatial/postgis>`
 
-* **Reconnaissance**:
+* **Data Mapping**:
   :doc:`QGIS <geospatial/qgis>`
+  :doc:`API Overpass Turbo <geospatial/overpass_turbo>` |
+
+* **Database Geographique**:
+  :doc:`PostgreSQL <geospatial/postgresql>`
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: Logiciel Géospatial
 
    geospatial/postgis
    geospatial/qgis
+   geospatial/overpass_turbo
+   geospatial/postgresql
 
 
 
